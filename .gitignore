@@ -1,2 +1,4 @@
 # Gitignore file for EduEvidence project
 
+ignore/
+data/
