@@ -67,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
         exportBtn.addEventListener('click', handleExportPDF);
     }
     
+    // Set up View Results button handler
+    const viewResultsBtn = document.getElementById('view-results-btn');
+    if (viewResultsBtn) {
+        viewResultsBtn.addEventListener('click', handleViewResults);
+    }
+    
     // Initialize download checklist link with current selection
     updateChecklistDownloadLink();
     
@@ -230,14 +236,37 @@ async function pollAnalysisStatus() {
         
         // Check if we have enriched_data in the response
         if (data.enriched_data) {
-            // Analysis is complete - show export button
+            // Analysis is complete - show results
             document.getElementById('status-message').textContent = 'Analysis complete!';
             document.getElementById('analysis-status').style.display = 'none';
             document.getElementById('analysis-result').style.display = 'block';
             
-            // Store the access token for PDF export
+            // Store the access token for PDF export and results viewing
             if (data.access_token) {
                 currentAccessToken = data.access_token;
+                
+                // Set up the direct link to results
+                const resultsUrl = `feedback_view.html?token=${currentAccessToken}`;
+                const resultsLink = document.getElementById('results-direct-link');
+                resultsLink.href = resultsUrl;
+                
+                // Set up the shareable link
+                const fullUrl = new URL(resultsUrl, window.location.origin).href;
+                const shareableLink = document.getElementById('shareable-link');
+                shareableLink.value = fullUrl;
+                
+                // Set up copy button functionality
+                const copyButton = document.getElementById('copy-link-btn');
+                const copySuccessMessage = document.getElementById('copy-success-message');
+                
+                copyButton.addEventListener('click', () => {
+                    shareableLink.select();
+                    document.execCommand('copy');
+                    copySuccessMessage.style.display = 'block';
+                    setTimeout(() => {
+                        copySuccessMessage.style.display = 'none';
+                    }, 3000);
+                });
             }
             
             // Stop polling
@@ -255,6 +284,23 @@ async function pollAnalysisStatus() {
     }
 }
 
+// Handle View Results button click
+async function handleViewResults() {
+    if (!currentRunId || !currentAccessToken) {
+        document.getElementById('status-message').textContent = 'No analysis results available to view.';
+        return;
+    }
+    
+    try {
+        // Navigate to the feedback view page with the access token
+        const feedbackViewUrl = `feedback_view.html?token=${currentAccessToken}`;
+        window.open(feedbackViewUrl, '_blank');
+    } catch (error) {
+        console.error('Error viewing results:', error);
+        document.getElementById('status-message').textContent = `Error viewing results: ${error.message}`;
+    }
+}
+
 // Handle PDF export button click
 async function handleExportPDF() {
     if (!currentRunId || !currentAccessToken) {
@@ -263,35 +309,11 @@ async function handleExportPDF() {
     }
     
     try {
-        // Option 1: Direct download using the run_id endpoint
+        // Direct download using the run_id endpoint
         const pdfUrl = `${API_BASE}/api/dmp/enriched-checklists/run/${currentRunId}/export-pdf?access_token=${currentAccessToken}`;
         
-        // Option 2: Create a shareable link to the export page
-        const exportPageUrl = `export.html?token=${currentAccessToken}`;
-        
-        // Ask user which option they prefer
-        const useExportPage = confirm('Would you like to get a shareable link (OK) or download directly (Cancel)?');
-        
-        if (useExportPage) {
-            // Show the user the shareable link
-            const linkText = window.location.origin + window.location.pathname.replace('index.html', '') + exportPageUrl;
-            
-            // Create a temporary input to copy the link
-            const tempInput = document.createElement('input');
-            tempInput.value = linkText;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            
-            alert('Shareable link copied to clipboard! You can share this link with others.');
-            
-            // Also open the export page
-            window.open(exportPageUrl, '_blank');
-        } else {
-            // Open the PDF directly in a new tab
-            window.open(pdfUrl, '_blank');
-        }
+        // Open the PDF directly in a new tab
+        window.open(pdfUrl, '_blank');
         
     } catch (error) {
         console.error('Error exporting PDF:', error);
@@ -320,7 +342,7 @@ async function handleDownloadChecklist(event) {
     }
     
     try {
-        console.log('Downloading blank checklist template...');
+        console.log('Downloading checklist...');
         
         // Create a URL to the checklist PDF export endpoint
         const checklistUrl = `${API_BASE}/api/dmp/checklists/finnish_dmp_evaluation_1domain/export-pdf`;

@@ -107,19 +107,19 @@ function extractSections(data) {
 
 // Get the appropriate color class for a compliance value
 function getComplianceColorClass(compliance) {
-    if (!compliance) return 'badge-secondary';
+    if (!compliance) return 'compliance-Unknown';
     
     const value = typeof compliance === 'string' ? compliance.toLowerCase() : '';
     
     if (value === 'yes' || value === 'excellent' || value === 'full') {
-        return 'badge-success';
+        return 'compliance-Excellent';
     } else if (value === 'partial' || value === 'satisfactory') {
-        return 'badge-warning';
+        return 'compliance-Satisfactory';
     } else if (value === 'no' || value === 'poor') {
-        return 'badge-danger';
+        return 'compliance-Poor';
     }
     
-    return 'badge-secondary';
+    return 'compliance-Unknown';
 }
 
 // Export the functions

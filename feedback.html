@@ -3,79 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReproAI Feedback</title>
+    <title>DMP Analyzer - Feedback</title>
+    <link rel="stylesheet" href="css/shared-styles.css">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .container {
-            width: 100%;
-        }
-        .centered {
-            text-align: center;
-        }
-        .nav {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .nav a {
-            margin: 0 10px;
-            color: #0057b8;
-            text-decoration: none;
-        }
-        .nav a:hover {
-            text-decoration: underline;
-        }
-        h1 {
-            color: #3399cc;
-            margin-bottom: 30px;
-        }
         .feedback-form {
             background-color: #f9f9f9;
             padding: 20px;
             border-radius: 5px;
             margin-bottom: 30px;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            min-height: 150px;
-        }
-        button {
-            background-color: #3399cc;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
+        
         .success-message {
             background-color: #d4edda;
             color: #155724;
@@ -84,6 +22,7 @@
             margin-bottom: 20px;
             display: none;
         }
+        
         .error-message {
             background-color: #f8d7da;
             color: #721c24;
@@ -92,23 +31,28 @@
             margin-bottom: 20px;
             display: none;
         }
+        
         .feedback-list {
             margin-top: 30px;
         }
+        
         .feedback-item {
             background-color: #f0f0f0;
             padding: 15px;
             border-radius: 4px;
             margin-bottom: 15px;
         }
+        
         .feedback-email {
             color: #666;
             font-style: italic;
             margin-bottom: 5px;
         }
+        
         .feedback-text {
             margin-top: 5px;
         }
+        
         .feedback-date {
             color: #999;
             font-size: 0.8em;
@@ -117,15 +61,13 @@
     </style>
 </head>
 <body>
+    <div id="spinner-overlay">
+        <div class="spinner"></div>
+    </div>
     <div class="container">
-        <div class="nav">
-            <a href="index.html">Home</a> | 
-            <a href="example.html">Example</a> | 
-            <a href="about.html">About</a> | 
-            <a href="feedback.html">Feedback</a> | 
-            <a href="privacy.html">Privacy</a>
-        </div>
-        <h1 class="centered">ReproAI Feedback</h1>
+        <!-- Include the navigation component -->
+        <div id="navigation-placeholder"></div>
+        <h1 class="centered">DMP Analyzer</h1>
         
         <div class="success-message" id="success-message">
             Thank you for your feedback! We appreciate your input.
@@ -145,10 +87,10 @@
                 
                 <div class="form-group">
                     <label for="feedback">Your feedback:</label>
-                    <textarea id="feedback" name="feedback" placeholder="Share your thoughts, suggestions, or questions about ReproAI..."></textarea>
+                    <textarea id="feedback" name="feedback" placeholder="Share your thoughts, suggestions, or questions..."></textarea>
                 </div>
                 
-                <button type="submit">Submit Feedback</button>
+                <button type="submit" disabled title="Feedback submission is not implemented yet">Submit Feedback</button>
             </form>
         </div>
         
@@ -263,6 +205,23 @@
         
         // Load feedback when the page loads
         document.addEventListener('DOMContentLoaded', loadFeedback);
+    </script>
+    <script>
+        // Load the navigation component
+        fetch('components/navigation.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navigation-placeholder').innerHTML = data;
+            });
+            
+        // Hide spinner when everything is loaded
+        window.addEventListener('load', function() {
+            var spinner = document.getElementById('spinner-overlay');
+            if (spinner) spinner.style.opacity = 0;
+            setTimeout(function() {
+                if (spinner) spinner.style.display = 'none';
+            }, 400);
+        });
     </script>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About DMP Analysis Tool</title>
+    <link rel="stylesheet" href="css/shared-styles.css">
     <link rel="stylesheet" href="style.css">
     <style>
         .content {
@@ -11,29 +12,15 @@
             max-width: 700px;
             margin: 0 auto;
         }
-        .nav {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .nav a {
-            margin: 0 10px;
-            color: #0057b8;
-            text-decoration: none;
-        }
-        .nav a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
+    <div id="spinner-overlay">
+        <div class="spinner"></div>
+    </div>
     <div class="container">
-        <div class="nav">
-            <a href="index.html">Home</a> | 
-            <a href="example.html">Example</a> | 
-            <a href="about.html">About</a> | 
-            <a href="feedback.html">Feedback</a> | 
-            <a href="privacy.html">Privacy</a>
-        </div>
+        <!-- Include the navigation component -->
+        <div id="navigation-placeholder"></div>
         <h1>About DMP Analyzer</h1>
         <div class="content">
             <h2>What is the DMP Analyzer?</h2>
@@ -83,9 +70,23 @@
                 <a href="https://doi.org/10.5281/zenodo.4762326" target="_blank">https://doi.org/10.5281/zenodo.4762326</a>
             </p>
         </div>
-        <div class="nav">
-            <a href="index.html">Back to Home</a>
-        </div>
     </div>
+    <script>
+        // Load the navigation component
+        fetch('components/navigation.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navigation-placeholder').innerHTML = data;
+            });
+            
+        // Hide spinner when everything is loaded
+        window.addEventListener('load', function() {
+            var spinner = document.getElementById('spinner-overlay');
+            if (spinner) spinner.style.opacity = 0;
+            setTimeout(function() {
+                if (spinner) spinner.style.display = 'none';
+            }, 400);
+        });
+    </script>
 </body>
 </html>

@@ -1,87 +1,90 @@
-z<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>DMP Feedback Results</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background: #f8f8fa; color: #222; }
-        .container { max-width: 900px; margin: 32px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 12px #0001; padding: 32px; }
-        h1 { font-size: 2rem; margin-bottom: 0.5em; }
-        h2 { margin-top: 2em; color: #3a3a5a; border-bottom: 1px solid #eee; padding-bottom: 0.2em; }
-        h3 { margin-top: 1.5em; color: #3a3a5a; }
-        .centered { text-align: center; }
-        .feedback-note { background: #f4f9ff; border-left: 5px solid #3399cc; padding: 1em; margin-bottom: 2em; white-space: pre-wrap; }
-        .domain-summary { margin-bottom: 1.5em; }
-        .domain-title { font-weight: bold; font-size: 1.1em; }
-        .section-header { background: #f1f5fb; padding: 0.5em; margin: 1em 0; font-weight: bold; }
-        .metadata-item { margin-bottom: 0.5em; }
-        .assessment-scale { display: flex; justify-content: space-between; margin: 1em 0; }
-        .assessment-item { padding: 0.5em 1em; border-radius: 4px; text-align: center; flex: 1; margin: 0 0.5em; }
-        .assessment-poor { background: #f8d7da; }
-        .assessment-satisfactory { background: #fff3cd; }
-        .assessment-excellent { background: #c6f6d5; }
-        .assessment-active { border: 2px solid #333; }
-        .compliance-badge { display: inline-block; padding: 0.2em 0.8em; border-radius: 16px; font-size: 0.95em; margin-right: 0.7em; }
-        .compliance-FullyMet, .compliance-Excellent { background: #c6f6d5; color: #137333; }
-        .compliance-PartiallyMet, .compliance-Satisfactory { background: #fff3cd; color: #856404; }
-        .compliance-NotMet, .compliance-Poor { background: #f8d7da; color: #a71d2a; }
-        .compliance-Unknown { background: #e2e3e5; color: #495057; }
-        .results-table { width: 100%; border-collapse: collapse; margin-top: 1em; margin-bottom: 2em; }
-        .results-table th, .results-table td { border: 1px solid #e0e0e0; padding: 0.6em 0.5em; text-align: left; vertical-align: top; }
-        .results-table th { background: #f1f5fb; }
-        .results-table tr:nth-child(even) { background: #fafbfc; }
-        .loading, .error { margin: 2em 0; font-size: 1.2em; text-align: center; }
-        .overall-score { font-size: 1.2em; margin: 1em 0; }
-        .score-value { font-weight: bold; }
-    </style>
+    <link rel="stylesheet" href="css/shared-styles.css">
+    <link rel="stylesheet" href="css/feedback-styles.css?v=1.1">
 </head>
 <body>
-<div class="container">
-    <h1 class="centered">AI-powered DMP Assessment</h1>
-    <div id="loading" class="loading">Loading analysis...</div>
-    <div id="error" class="error" style="display:none;"></div>
-    <div id="results" style="display:none;">
-        <!-- PDF Export Button -->
-        <div class="pdf-export-container" style="text-align: right; margin-bottom: 1em;">
-            <button id="export-pdf" class="export-button" style="padding: 8px 16px; background-color: #3399cc; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                <span style="margin-right: 5px;">📄</span> Download PDF Report
-            </button>
-        </div>
-        <!-- Manuscript Metadata Section -->
-        <div id="manuscript-metadata"></div>
-        
-        <!-- Analysis Information Section -->
-        <h2>Analysis Information</h2>
-        <div id="analysis-info"></div>
-        
-        <!-- Overall Assessment Section -->
-        <h2>Overall Assessment</h2>
-        <div id="overall-assessment"></div>
-        
-        <!-- Checklist Information Section -->
-        <h2>Checklist Information</h2>
-        <div id="checklist-info"></div>
-        
-        <!-- Feedback Note Section -->
-        <h2>Feedback Summary</h2>
-        <div id="feedback-note" class="feedback-note"></div>
-        
-        <!-- Domain Summaries Section -->
-        <h2>Summary of Results</h2>
-        <div id="domain-summaries"></div>
-        
-        <!-- Detailed Results Section -->
-        <h2>Detailed Results</h2>
-        <div id="domains"></div>
+    <div id="spinner-overlay">
+        <div class="spinner"></div>
     </div>
-</div>
+    <div class="container">
+        <!-- Include the navigation component -->
+        <div id="navigation-placeholder"></div>
+        <h1 class="centered">DMP Assessment Results</h1>
+        <div id="loading" class="loading">Loading analysis...</div>
+        <div id="error" class="error" style="display:none;">
+            <p class="error-message"></p>
+            <div id="debug-info" style="display:none;"></div>
+        </div>
+        <div id="results" style="display:none;">
+            <!-- Feedback text and PDF Export Button row -->
+            <div class="feedback-pdf-row">
+                <div class="feedback-prompt">
+                    Please leave your <a href="feedback.html">feedback</a> on analysis results.
+                </div>
+                <div class="pdf-export-container">
+                    <button id="export-pdf" class="export-button pdf-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: text-bottom;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><polyline points="15 15 12 18 9 15"></polyline></svg>
+                        PDF Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Overall Assessment Section -->
+            <div id="overall-assessment"></div>
+            
+            <!-- Analysis Info Section (includes manuscript metadata and checklist info) -->
+            <div id="analysis-info"></div>
+            
+            <!-- Domain Summaries Section -->
+            <div id="domain-summaries"></div>
+            
+            <!-- Detailed Domain Analysis Section -->
+            <div id="domains"></div>
+            
+            <!-- Feedback for Author Section -->
+            <div id="feedback-note"></div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+<script src="js/feedback-data.js?v=1.1"></script>
+<script src="js/feedback-render.js?v=1.1"></script>
+<script src="js/test-modules.js?v=1.1"></script>
 <script>
+    // Load the navigation component
+    fetch('components/navigation.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navigation-placeholder').innerHTML = data;
+        });
+        
+    // Hide spinner when everything is loaded
+    window.addEventListener('load', function() {
+        var spinner = document.getElementById('spinner-overlay');
+        if (spinner) spinner.style.opacity = 0;
+        setTimeout(function() {
+            if (spinner) spinner.style.display = 'none';
+        }, 400);
+    });
+</script>
+<script>
+// --- API Constants --- //
+// Local API endpoint
+// const API_BASE_URL = '/api/dmp';
+
+// Production API endpoint
+const API_BASE_URL = 'https://reproai-app.lemondune-e106e75a.westeurope.azurecontainerapps.io/api/dmp';
+
 // --- Utility Functions --- //
 function getTokenFromUrl() {
     const params = new URLSearchParams(window.location.search);
-    return params.get('token') || '';
+    return params.get('token');
 }
+
 function escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>"']/g, function(tag) {
@@ -549,6 +552,65 @@ function renderDomains(data, checklist) {
         const resultSpan = document.createElement('span');
         resultSpan.className = `compliance-badge ${classificationClass}`;
         resultSpan.textContent = classification || 'Unknown';
+        resultDiv.appendChild(document.createTextNode('Result: '));
+        resultDiv.appendChild(resultSpan);
+        container.appendChild(resultDiv);
+        
+        // Table of items
+        if (domain.items && domain.items.length > 0) {
+            const table = document.createElement('table');
+            table.className = 'items-table';
+            
+            // Table header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            
+            const headers = ['Item', 'Compliance', 'Question', 'Explanation'];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Table body
+            const tbody = document.createElement('tbody');
+            
+            // Add rows for each item
+            domain.items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'even-row' : 'odd-row';
+                
+                // Item title
+                const itemCell = document.createElement('td');
+                itemCell.textContent = item.title || `Item ${item.item_id}`;
+                row.appendChild(itemCell);
+                
+                // Compliance
+                const complianceCell = document.createElement('td');
+                const itemCompliance = item.analysis?.compliance || 'Unknown';
+                
+                const itemBadge = document.createElement('span');
+                itemBadge.className = `badge ${FeedbackData.getComplianceColorClass(itemCompliance)}`;
+                itemBadge.textContent = itemCompliance;
+                complianceCell.appendChild(itemBadge);
+                row.appendChild(complianceCell);
+                
+                // Question
+                const questionCell = document.createElement('td');
+                questionCell.textContent = item.question || '';
+                row.appendChild(questionCell);
+                
+                // Explanation
+                const explanationCell = document.createElement('td');
+                explanationCell.textContent = item.analysis?.explanation || '';
+                row.appendChild(explanationCell);
+                
+                tbody.appendChild(row);
+            });
+            
             table.appendChild(tbody);
             container.appendChild(table);
         } else {
@@ -560,87 +622,10 @@ function renderDomains(data, checklist) {
 }
 
 // --- Render Overall Assessment --- //
-function renderOverallAssessment(data) {
-    const container = document.getElementById('overall-assessment');
-    container.innerHTML = '';
-    
-    // Get overall assessment from summary if available
-    const summary = data.summary || {};
-    const overallScore = summary.overall_score || 0;
-    const overallClassification = summary.overall_classification || '';
-    
-    // Create overall score display
-    const scoreDiv = document.createElement('div');
-    scoreDiv.className = 'overall-score';
-    scoreDiv.innerHTML = `Overall Score: <span class="score-value">${overallScore}</span>`;
-    container.appendChild(scoreDiv);
-    
-    // Create assessment scale
-    const scaleDiv = document.createElement('div');
-    scaleDiv.className = 'assessment-scale';
-    
-    // Poor assessment
-    const poorDiv = document.createElement('div');
-    poorDiv.className = 'assessment-item assessment-poor';
-    poorDiv.textContent = 'Poor';
-    if (overallClassification.toLowerCase() === 'poor') {
-        poorDiv.classList.add('assessment-active');
-    }
-    scaleDiv.appendChild(poorDiv);
-    
-    // Satisfactory assessment
-    const satisfactoryDiv = document.createElement('div');
-    satisfactoryDiv.className = 'assessment-item assessment-satisfactory';
-    satisfactoryDiv.textContent = 'Satisfactory';
-    if (overallClassification.toLowerCase() === 'satisfactory') {
-        satisfactoryDiv.classList.add('assessment-active');
-    }
-    scaleDiv.appendChild(satisfactoryDiv);
-    
-    // Excellent assessment
-    const excellentDiv = document.createElement('div');
-    excellentDiv.className = 'assessment-item assessment-excellent';
-    excellentDiv.textContent = 'Excellent';
-    if (overallClassification.toLowerCase() === 'excellent') {
-        excellentDiv.classList.add('assessment-active');
-    }
-    scaleDiv.appendChild(excellentDiv);
-    
-    container.appendChild(scaleDiv);
-}
+// This function has been moved to feedback-render.js
 
 // --- Render Checklist Info --- //
-function renderChecklistInfo(data) {
-    const container = document.getElementById('checklist-info');
-    container.innerHTML = '';
-    
-    // Get checklist data
-    const checklist = data.checklist || {};
-    
-    // Display checklist version if available
-    if (checklist.version) {
-        const versionElem = document.createElement('p');
-        versionElem.className = 'metadata-item';
-        versionElem.textContent = `Checklist Version: ${checklist.version}`;
-        container.appendChild(versionElem);
-    }
-    
-    // Display checklist name if available
-    if (checklist.name) {
-        const nameElem = document.createElement('p');
-        nameElem.className = 'metadata-item';
-        nameElem.textContent = `Checklist Name: ${checklist.name}`;
-        container.appendChild(nameElem);
-    }
-    
-    // Display checklist ID if available
-    if (checklist.checklist_id) {
-        const idElem = document.createElement('p');
-        idElem.className = 'metadata-item';
-        idElem.textContent = `Checklist ID: ${checklist.checklist_id}`;
-        container.appendChild(idElem);
-    }
-}
+// This function has been moved to feedback-render.js
 
 // --- PDF Export Function --- //
 function setupPdfExport(token) {
@@ -653,8 +638,8 @@ function setupPdfExport(token) {
             exportButton.textContent = 'Generating PDF...';
             
             // Use the PDF export endpoint with the access token
-            const API_BASE = 'https://reproai-app.lemondune-e106e75a.westeurope.azurecontainerapps.io/api/dmp/enriched-checklists/access/';
-            const pdfUrl = `${API_BASE}${encodeURIComponent(token)}/export-pdf`;
+            const pdfUrl = `${API_BASE_URL}/enriched-checklists/access/${encodeURIComponent(token)}/export-pdf`;
+            
             // Open in new tab instead of iframe for production API
             window.open(pdfUrl, '_blank');
             
@@ -678,48 +663,77 @@ function setupPdfExport(token) {
     if (!token) {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('error').style.display = 'block';
-        document.getElementById('error').textContent = 'No token provided in URL.';
+        document.getElementById('error').querySelector('.error-message').textContent = 'No token provided in URL.';
         return;
     }
+    
     try {
-        // You may need to adjust the API_BASE depending on your deployment
-        const API_BASE = 'https://reproai-app.lemondune-e106e75a.westeurope.azurecontainerapps.io/api/dmp/enriched-checklists/access/';
-        const response = await fetch(`${API_BASE}${encodeURIComponent(token)}`);
-        if (!response.ok) throw new Error('API returned ' + response.status);
+        // Fetch enriched checklist data using the access token
+        const response = await fetch(`${API_BASE_URL}/enriched-checklists/access/${encodeURIComponent(token)}`);
+        
+        if (!response.ok) {
+            throw new Error(`API returned ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
+        console.log('Fetched data:', data);
+        
+        // For debugging
+        const debugInfo = document.getElementById('debug-info');
+        debugInfo.textContent = JSON.stringify(data, null, 2).substring(0, 1000) + '...';
+        
+        // Normalize the data structure
+        const normalizedData = FeedbackData.normalizeData(data);
         
         // Fetch base checklist data if needed for additional context
-        let checklist = data.checklist || {};
-        if (!checklist.sections && data.checklist_id) {
+        let checklist = normalizedData.checklist || {};
+        if (!checklist.sections && normalizedData.checklist_id) {
             try {
-                const checklistResponse = await fetch(`https://reproai-app.lemondune-e106e75a.westeurope.azurecontainerapps.io/api/dmp/checklists/${data.checklist_id}`);
+                const checklistResponse = await fetch(`${API_BASE_URL}/checklists/${normalizedData.checklist_id}`);
                 if (checklistResponse.ok) {
                     checklist = await checklistResponse.json();
+                    // Add the checklist to the normalized data
+                    normalizedData.checklist = checklist;
                 }
             } catch (checklistErr) {
                 console.warn('Failed to fetch base checklist:', checklistErr);
             }
         }
         
+        // Hide loading, show results
         document.getElementById('loading').style.display = 'none';
         document.getElementById('results').style.display = 'block';
         
-        // Render all sections
-        renderManuscriptMetadata(data);
-        renderAnalysisInfo(data);
-        renderOverallAssessment(data);
-        renderChecklistInfo(data);
-        renderFeedbackNote(data.summary && data.summary.feedback_note);
-        renderDomainSummaries(data, checklist);
-        renderDomains(data, checklist);
+        // Render all sections using our modular render functions
+        try {
+            // Use FeedbackRender functions for all sections
+            console.log('Rendering overall assessment...');
+            FeedbackRender.renderOverallAssessment(normalizedData);
+            
+            console.log('Rendering analysis info (with manuscript metadata)...');
+            FeedbackRender.renderAnalysisInfo(normalizedData);
+        } catch (renderError) {
+            console.error('Error during section rendering:', renderError);
+        }
+        
+        // Get feedback note from the data
+        const feedbackNote = FeedbackData.safeGet(normalizedData, 'summary.feedback_note') || 
+                            FeedbackData.safeGet(normalizedData, 'feedback_note');
+        FeedbackRender.renderFeedbackNote(feedbackNote);
+        
+        // Render domain summaries and detailed domain analysis
+        FeedbackRender.renderDomainSummaries(normalizedData);
+        FeedbackRender.renderDomains(normalizedData, checklist);
         
         // Setup PDF export functionality
         setupPdfExport(token);
         
     } catch (err) {
+        console.error('Error loading analysis:', err);
         document.getElementById('loading').style.display = 'none';
         document.getElementById('error').style.display = 'block';
-        document.getElementById('error').textContent = 'Failed to load analysis: ' + err;
+        document.getElementById('error').querySelector('.error-message').textContent = `Failed to load analysis: ${err.message}`;
+        document.getElementById('debug-info').style.display = 'block';
     }
 })();
 </script>
